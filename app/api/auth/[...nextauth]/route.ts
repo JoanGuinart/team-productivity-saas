@@ -1,15 +1,9 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient, User as PrismaUser } from "@prisma/client";
+import { User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { PrismaPg } from "@prisma/adapter-pg";
-// Inicializa Prisma
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL!, // ✅ asegura que esté definida
-  }),
-});
+import { prisma } from "@/lib/prisma";
 
 // Extiende los tipos de Session para incluir user.id
 declare module "next-auth" {

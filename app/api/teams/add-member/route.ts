@@ -1,13 +1,6 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  }),
-});
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -18,9 +11,9 @@ export async function POST(req: Request) {
       });
     }
 
-    const { teamId, userEmail, role } = await req.json();
+    const { teamId, userId, role } = await req.json();
 
-    if (!teamId || !userEmail) {
+    if (!teamId || !userId) {
       return new Response(JSON.stringify({ error: "Faltan datos" }), {
         status: 400,
       });
@@ -28,7 +21,7 @@ export async function POST(req: Request) {
 
     // Verificar que el usuario que se quiere agregar existe
     const userToAdd = await prisma.user.findUnique({
-      where: { email: userEmail },
+      where: { id: userId },
     });
     if (!userToAdd) {
       return new Response(JSON.stringify({ error: "Usuario no encontrado" }), {
@@ -44,11 +37,28 @@ export async function POST(req: Request) {
       });
     }
 
-    // Agregar al miembro (si ya existe, Prisma lanzará error por la constraint unique)
+    // Verificar que el usuario no esté ya en el equipo
+    const existingMember = await prisma.teamMember.findUnique({
+      where: {
+        userId_teamId: {
+          userId,
+          teamId,
+        },
+      },
+    });
+
+    if (existingMember) {
+      return new Response(
+        JSON.stringify({ error: "Este usuario ya es miembro del equipo" }),
+        { status: 400 },
+      );
+    }
+
+    // Agregar al miembro
     const member = await prisma.teamMember.create({
       data: {
         teamId,
-        userId: userToAdd.id,
+        userId,
         role: role || "member",
       },
     });

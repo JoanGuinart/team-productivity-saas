@@ -1,13 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL!, // ✅ asegura que esté definida
-  }),
-});
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
