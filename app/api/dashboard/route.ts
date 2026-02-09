@@ -24,7 +24,7 @@ export async function GET() {
     });
 
     // Formatear datos para el frontend
-    const formattedTeams = teams.map(({ team }) => ({
+    const formattedTeams = teams.map(({ team }: { team: typeof teams[number]['team'] }) => ({
       id: team.id,
       name: team.name,
       membersCount: team.members.length,

@@ -61,7 +61,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
   const { taskid: taskId } = await params;
   const body = await req.json();
-  const { status, assigneeId, title, description } = body;
+  const { status, assigneeId, title, description, priority, dueDate } = body;
 
   // Obtener tarea y verificar acceso
   const task = await prisma.task.findFirst({
@@ -119,6 +119,8 @@ export async function PATCH(req: Request, { params }: Params) {
       ...(assigneeId === null && { assigneeId: null }),
       ...(title && { title }),
       ...(description !== undefined && { description }),
+      ...(priority && { priority }),
+      ...(dueDate !== undefined && { dueDate: dueDate ? new Date(dueDate) : null }),
     },
     include: {
       assignee: {

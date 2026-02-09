@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import TaskForm from "./TaskForm";
+
+type StatusType = "todo" | "in-progress" | "done";
 
 interface Task {
   id: string;
   title: string;
   description?: string;
-  status: "todo" | "in-progress" | "done";
+  status: StatusType;
   projectId: string;
   assigneeId?: string | null;
   assignee?: {
@@ -14,6 +17,8 @@ interface Task {
     name?: string | null;
     email?: string;
   };
+  priority?: "low" | "medium" | "high" | "urgent";
+  dueDate?: string | null;
   createdAt: string;
 }
 
@@ -22,10 +27,17 @@ interface Project {
   name: string;
 }
 
+interface Member {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+}
+
 interface Team {
   id: string;
   name: string;
   projects?: Project[];
+  members?: Member[];
 }
 
 interface TasksManagerProps {
@@ -33,16 +45,17 @@ interface TasksManagerProps {
   onTaskDeleted: () => void;
 }
 
-const statusColors = {
-  todo: "bg-red-100 text-red-800",
-  "in-progress": "bg-yellow-100 text-yellow-800",
-  done: "bg-green-100 text-green-800",
-};
+const statusColumns: { id: StatusType; label: string }[] = [
+  { id: "todo", label: "📌 Por hacer" },
+  { id: "in-progress", label: "⚙️ En progreso" },
+  { id: "done", label: "✅ Completado" },
+];
 
-const statusLabels = {
-  todo: "Por hacer",
-  "in-progress": "En progreso",
-  done: "Completado",
+const priorityStyles: Record<string, string> = {
+  low: "bg-slate-100 text-slate-700",
+  medium: "bg-blue-100 text-blue-700",
+  high: "bg-orange-100 text-orange-700",
+  urgent: "bg-red-100 text-red-700",
 };
 
 export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps) {
@@ -50,9 +63,25 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
   const currentTeam = teams.find((t) => t.id === selectedTeam);
   const projects = currentTeam?.projects || [];
+
+  useEffect(() => {
+    if (!selectedTeam) {
+      setSelectedProject("");
+      setTasks([]);
+      return;
+    }
+
+    if (projects.length > 0) {
+      setSelectedProject((prev) => prev || projects[0].id);
+    } else {
+      setSelectedProject("");
+      setTasks([]);
+    }
+  }, [selectedTeam, projects.length]);
 
   useEffect(() => {
     if (selectedProject) {
@@ -89,7 +118,7 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
     }
   };
 
-  const updateTaskStatus = async (taskId: string, newStatus: string) => {
+  const updateTaskStatus = async (taskId: string, newStatus: StatusType) => {
     try {
       const res = await fetch(`/api/tasks/${taskId}`, {
         method: "PATCH",
@@ -105,85 +134,135 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
     }
   };
 
-  return (
-    <div className="space-y-4">
-      {/* Filtros */}
-      <div className="grid grid-cols-2 gap-4">
-        <select
-          value={selectedTeam}
-          onChange={(e) => {
-            setSelectedTeam(e.target.value);
-            setSelectedProject("");
-          }}
-          className="border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Selecciona equipo</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name}
-            </option>
-          ))}
-        </select>
+  const groupedTasks = useMemo(() => {
+    return statusColumns.reduce<Record<StatusType, Task[]>>((acc, col) => {
+      acc[col.id] = tasks.filter((t) => t.status === col.id);
+      return acc;
+    }, { "todo": [], "in-progress": [], "done": [] });
+  }, [tasks]);
 
-        <select
-          value={selectedProject}
-          onChange={(e) => setSelectedProject(e.target.value)}
-          className="border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={!selectedTeam}
-        >
-          <option value="">Selecciona proyecto</option>
-          {projects.map((proj) => (
-            <option key={proj.id} value={proj.id}>
-              {proj.name}
-            </option>
-          ))}
-        </select>
+  return (
+    <div className="space-y-6">
+      {/* Filtros */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Equipo</label>
+          <select
+            value={selectedTeam}
+            onChange={(e) => setSelectedTeam(e.target.value)}
+            className="border border-slate-300 p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Selecciona equipo</option>
+            {teams.map((team) => (
+              <option key={team.id} value={team.id}>
+                {team.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Proyecto</label>
+          <select
+            value={selectedProject}
+            onChange={(e) => setSelectedProject(e.target.value)}
+            className="border border-slate-300 p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={!selectedTeam || projects.length === 0}
+          >
+            <option value="">Selecciona proyecto</option>
+            {projects.map((proj) => (
+              <option key={proj.id} value={proj.id}>
+                {proj.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Lista de tareas */}
-      {loading ? (
-        <div className="text-center py-8">Cargando tareas...</div>
-      ) : tasks.length === 0 ? (
-        <div className="text-center py-8 text-slate-500">
-          {selectedProject ? "No hay tareas en este proyecto" : "Selecciona un proyecto"}
+      {selectedTeam && projects.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-lg p-4">
+          <h4 className="font-semibold text-slate-900 mb-3">➕ Crear tarea</h4>
+          <TaskForm
+            teamId={selectedTeam}
+            projects={projects}
+            members={currentTeam?.members || []}
+          />
         </div>
+      )}
+
+      {!selectedTeam ? (
+        <div className="bg-white rounded-lg p-6 text-center border border-slate-200">
+          Selecciona un equipo para ver sus tareas.
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="bg-yellow-50 border border-yellow-300 text-yellow-900 rounded-lg p-6 text-center">
+          Este equipo no tiene proyectos. Ve a la pestaña <b>Proyectos</b> y crea uno.
+        </div>
+      ) : loading ? (
+        <div className="text-center py-8">Cargando tareas...</div>
       ) : (
-        <div className="space-y-2">
-          {tasks.map((task) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {statusColumns.map((col) => (
             <div
-              key={task.id}
-              className="bg-white p-4 rounded-lg border border-slate-200 hover:shadow-md transition"
+              key={col.id}
+              className="bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[400px]"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => {
+                if (draggingTaskId) {
+                  updateTaskStatus(draggingTaskId, col.id);
+                  setDraggingTaskId(null);
+                }
+              }}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-slate-900">{task.title}</h4>
-                  {task.description && (
-                    <p className="text-sm text-slate-600 mt-1">{task.description}</p>
-                  )}
-                  <div className="mt-2 flex items-center gap-2 flex-wrap">
-                    <span className="text-xs text-slate-500">👤 {task.assignee?.name || task.assignee?.email || "Sin asignar"}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <select
-                    value={task.status}
-                    onChange={(e) => updateTaskStatus(task.id, e.target.value)}
-                    className={`text-xs px-2 py-1 rounded font-medium ${statusColors[task.status]} border-0 cursor-pointer`}
-                  >
-                    <option value="todo">Por hacer</option>
-                    <option value="in-progress">En progreso</option>
-                    <option value="done">Completado</option>
-                  </select>
-
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition"
-                  >
-                    🗑️ Borrar
-                  </button>
-                </div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-semibold text-slate-900">{col.label}</h4>
+                <span className="text-xs bg-slate-200 px-2 py-1 rounded">
+                  {groupedTasks[col.id].length}
+                </span>
               </div>
+
+              {groupedTasks[col.id].length === 0 ? (
+                <p className="text-sm text-slate-500 italic">Sin tareas</p>
+              ) : (
+                <div className="space-y-2">
+                  {groupedTasks[col.id].map((task) => (
+                    <div
+                      key={task.id}
+                      draggable
+                      onDragStart={() => setDraggingTaskId(task.id)}
+                      className="bg-white border border-slate-200 rounded-lg p-3 cursor-grab hover:shadow-md transition"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <h5 className="font-medium text-slate-900 text-sm">
+                          {task.title}
+                        </h5>
+                        <button
+                          onClick={() => deleteTask(task.id)}
+                          className="text-xs text-red-500 hover:text-red-700"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+
+                      {task.description && (
+                        <p className="text-xs text-slate-600 mt-1">
+                          {task.description}
+                        </p>
+                      )}
+
+                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                        <span className="text-xs text-slate-500">👤 {task.assignee?.name || task.assignee?.email || "Sin asignar"}</span>
+                        <span className={`text-xs px-2 py-1 rounded ${priorityStyles[task.priority || "medium"]}`}>
+                          {task.priority || "medium"}
+                        </span>
+                        {task.dueDate && (
+                          <span className="text-xs text-slate-500">⏰ {new Date(task.dueDate).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

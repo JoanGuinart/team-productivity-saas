@@ -7,6 +7,8 @@ interface CreateTaskBody {
   description?: string;
   projectId: string;
   assigneeId?: string;
+  priority?: string;
+  dueDate?: string;
 }
 
 export async function POST(req: Request) {
@@ -19,7 +21,7 @@ export async function POST(req: Request) {
   }
 
   const body: CreateTaskBody = await req.json();
-  const { title, description, projectId, assigneeId } = body;
+  const { title, description, projectId, assigneeId, priority, dueDate } = body;
 
   if (!title || !projectId) {
     return new Response(JSON.stringify({ error: "Faltan datos" }), {
@@ -80,6 +82,8 @@ export async function POST(req: Request) {
       description,
       projectId,
       assigneeId: assigneeId || null,
+      priority: priority || "medium",
+      dueDate: dueDate ? new Date(dueDate) : null,
       status: "todo",
     },
     include: {

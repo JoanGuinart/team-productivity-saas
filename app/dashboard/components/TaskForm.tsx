@@ -24,6 +24,8 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
   const [description, setDescription] = useState("");
   const [projectId, setProjectId] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
+  const [priority, setPriority] = useState("medium");
+  const [dueDate, setDueDate] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +34,14 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
     const res = await fetch("/api/tasks/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, projectId, assigneeId }),
+      body: JSON.stringify({
+        title,
+        description,
+        projectId,
+        assigneeId,
+        priority,
+        dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+      }),
     });
 
     if (res.ok) {
@@ -41,6 +50,8 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
       setDescription("");
       setProjectId("");
       setAssigneeId("");
+      setPriority("medium");
+      setDueDate("");
     } else {
       const data = await res.json();
       alert("Error: " + data.error);
@@ -76,6 +87,28 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
         rows={2}
         disabled={projects.length === 0}
       />
+
+      <div className="grid grid-cols-2 gap-2 mb-2">
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={projects.length === 0}
+        >
+          <option value="low">Prioridad: baja</option>
+          <option value="medium">Prioridad: media</option>
+          <option value="high">Prioridad: alta</option>
+          <option value="urgent">Prioridad: urgente</option>
+        </select>
+
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={projects.length === 0}
+        />
+      </div>
 
       <select
         value={projectId}
