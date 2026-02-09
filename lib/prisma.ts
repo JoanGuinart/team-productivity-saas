@@ -19,7 +19,7 @@ const createClient = () => {
     databaseUrl.startsWith("prisma+postgres://")
   ) {
     return new PrismaClient({
-      accelerateUrl: databaseUrl,
+      datasourceUrl: databaseUrl,
     });
   }
 
