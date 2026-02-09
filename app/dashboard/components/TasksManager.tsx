@@ -65,6 +65,24 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
   const [loading, setLoading] = useState(false);
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
+  // Mostrar mensaje si no hay equipos
+  if (teams.length === 0) {
+    return (
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 text-center">
+        <div className="text-6xl mb-4">👥</div>
+        <h3 className="text-xl font-bold text-slate-900 mb-2">
+          ¡Crea tu primer equipo!
+        </h3>
+        <p className="text-slate-600 mb-4">
+          Para gestionar tareas, primero necesitas crear un equipo y luego un proyecto.
+        </p>
+        <p className="text-sm text-slate-500">
+          Ve a la pestaña <span className="font-semibold">👥 Equipo</span> para comenzar.
+        </p>
+      </div>
+    );
+  }
+
   const currentTeam = teams.find((t) => t.id === selectedTeam);
   const projects = currentTeam?.projects || [];
 

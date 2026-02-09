@@ -78,29 +78,44 @@ export default function ProjectsManager({
 
   return (
     <div className="space-y-6">
-      {/* Seleccionar equipo */}
-      <div>
-        <label className="block text-sm font-medium text-slate-900 mb-2">
-          Selecciona un equipo
-        </label>
-        <select
-          value={selectedTeam}
-          onChange={(e) => setSelectedTeam(e.target.value)}
-          className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">-- Selecciona equipo --</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {selectedTeam && (
+      {teams.length === 0 ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 text-center">
+          <div className="text-6xl mb-4">👥</div>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">
+            ¡Crea tu primer equipo!
+          </h3>
+          <p className="text-slate-600 mb-4">
+            Para crear proyectos, primero necesitas crear un equipo.
+          </p>
+          <p className="text-sm text-slate-500">
+            Ve a la pestaña <span className="font-semibold">👥 Equipo</span> para comenzar.
+          </p>
+        </div>
+      ) : (
         <>
-          {/* Crear proyecto */}
-          <form onSubmit={createProject} className="bg-green-50 p-4 rounded-lg border border-green-200">
+          {/* Seleccionar equipo */}
+          <div>
+            <label className="block text-sm font-medium text-slate-900 mb-2">
+              Selecciona un equipo
+            </label>
+            <select
+              value={selectedTeam}
+              onChange={(e) => setSelectedTeam(e.target.value)}
+              className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">-- Selecciona equipo --</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedTeam && (
+            <>
+              {/* Crear proyecto */}
+              <form onSubmit={createProject} className="bg-green-50 p-4 rounded-lg border border-green-200">
             <h4 className="font-semibold text-slate-900 mb-3">📁 Crear Nuevo Proyecto</h4>
             <div className="space-y-3">
               <input
@@ -166,6 +181,8 @@ export default function ProjectsManager({
               </div>
             )}
           </div>
+            </>
+          )}
         </>
       )}
     </div>

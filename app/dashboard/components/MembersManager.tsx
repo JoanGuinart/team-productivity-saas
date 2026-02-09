@@ -36,6 +36,8 @@ export default function MembersManager({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [role, setRole] = useState("member");
   const [loading, setLoading] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
+  const [creatingTeam, setCreatingTeam] = useState(false);
 
   const currentTeam = teams.find((t) => t.id === selectedTeam);
   const members = currentTeam?.members || [];
@@ -63,6 +65,30 @@ export default function MembersManager({
 
     searchUsers();
   }, [searchQuery, selectedTeam]);
+
+  const createTeam = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeamName.trim()) return alert("Nombre del equipo requerido");
+
+    setCreatingTeam(true);
+    try {
+      const res = await fetch("/api/teams/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newTeamName }),
+      });
+
+      if (!res.ok) throw new Error("Error creando equipo");
+      alert("Equipo creado ✅");
+      setNewTeamName("");
+      onMemberDeleted(); // Recargar equipos
+    } catch (error) {
+      console.error(error);
+      alert("Error creando equipo");
+    } finally {
+      setCreatingTeam(false);
+    }
+  };
 
   const addMember = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,6 +141,28 @@ export default function MembersManager({
 
   return (
     <div className="space-y-6">
+      {/* Crear equipo nuevo */}
+      <form onSubmit={createTeam} className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <h4 className="font-semibold text-slate-900 mb-3">➕ Crear Nuevo Equipo</h4>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Nombre del equipo"
+            value={newTeamName}
+            onChange={(e) => setNewTeamName(e.target.value)}
+            className="flex-1 border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            disabled={creatingTeam}
+          />
+          <button
+            type="submit"
+            disabled={creatingTeam || !newTeamName.trim()}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {creatingTeam ? "Creando..." : "Crear"}
+          </button>
+        </div>
+      </form>
+
       {/* Seleccionar equipo */}
       <div>
         <label className="block text-sm font-medium text-slate-900 mb-2">

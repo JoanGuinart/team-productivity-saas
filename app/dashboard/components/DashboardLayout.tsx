@@ -26,15 +26,15 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="flex h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300 fixed h-screen flex flex-col shadow-lg`}
+        } bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300 h-screen overflow-hidden flex flex-col shadow-lg`}
       >
         {/* Logo/Brand */}
-        <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="flex-shrink-0 p-4 border-b border-slate-700 flex items-center justify-between">
           {sidebarOpen && <span className="font-bold text-lg">TaskFlow</span>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -46,14 +46,14 @@ export default function DashboardLayout({
 
         {/* User Info */}
         {sidebarOpen && (
-          <div className="px-4 py-3 border-b border-slate-700">
+          <div className="flex-shrink-0 px-4 py-3 border-b border-slate-700">
             <p className="text-sm text-slate-300">Usuario</p>
             <p className="text-sm font-medium truncate">{session?.user?.email}</p>
           </div>
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-2">
+        <nav className="flex-1 min-h-0 px-3 py-4 space-y-2 overflow-y-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -71,26 +71,26 @@ export default function DashboardLayout({
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-slate-700">
-          <div className="mb-2">
-            <LogoutButton />
-          </div>
+        <div className="flex-shrink-0 p-4 border-t border-slate-700">
+          <LogoutButton />
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className={`${sidebarOpen ? "ml-64" : "ml-20"} flex-1 overflow-auto transition-all`}>
-        {/* Top Header */}
-        <div className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-          <div className="px-8 py-4">
-            <h1 className="text-2xl font-bold text-slate-900">
-              {tabs.find((t) => t.id === activeTab)?.label}
-            </h1>
+      <main className="flex-1 transition-all">
+        <div className="h-screen flex flex-col">
+          {/* Top Header */}
+          <div className="bg-white border-b border-slate-200 shadow-sm">
+            <div className="px-8 py-4">
+              <h1 className="text-2xl font-bold text-slate-900">
+                {tabs.find((t) => t.id === activeTab)?.label}
+              </h1>
+            </div>
           </div>
-        </div>
 
-        {/* Page Content */}
-        <div className="p-8">{children}</div>
+          {/* Page Content */}
+          <div className="flex-1 overflow-y-auto p-8">{children}</div>
+        </div>
       </main>
     </div>
   );
