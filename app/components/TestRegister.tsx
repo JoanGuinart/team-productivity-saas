@@ -6,6 +6,7 @@ export default function TestRegister() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const [result, setResult] = useState("");
 
   const handleRegister = async () => {
@@ -13,7 +14,7 @@ export default function TestRegister() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, password }),
+        body: JSON.stringify({ email, name, password, adminPassword }),
       });
 
       const data = await res.json();
@@ -25,6 +26,7 @@ export default function TestRegister() {
         setEmail("");
         setName("");
         setPassword("");
+        setAdminPassword("");
       }
     } catch (err) {
       console.error(err);
@@ -51,9 +53,16 @@ export default function TestRegister() {
       />
       <input
         type="password"
-        placeholder="Contraseña"
+        placeholder="Contraseña del usuario"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="border p-2 w-full mb-2 rounded"
+      />
+      <input
+        type="password"
+        placeholder="Contraseña de administrador"
+        value={adminPassword}
+        onChange={(e) => setAdminPassword(e.target.value)}
         className="border p-2 w-full mb-2 rounded"
       />
       <button

@@ -3,7 +3,15 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { email, name, password } = await req.json();
+    const { email, name, password, adminPassword } = await req.json();
+
+    // Validar contraseña de admin
+    if (adminPassword !== process.env.ADMIN_PASSWORD) {
+      return new Response(
+        JSON.stringify({ error: "Contraseña de administrador inválida" }),
+        { status: 403 },
+      );
+    }
 
     if (!email || !password) {
       return new Response(

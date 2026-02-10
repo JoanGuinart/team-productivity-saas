@@ -1,7 +1,6 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
@@ -17,6 +16,8 @@ declare module "next-auth" {
 
   interface User {
     id: string;
+    email?: string | null;
+    name?: string | null;
   }
 }
 
@@ -36,9 +37,7 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(
-        credentials: Credentials | undefined,
-      ): Promise<PrismaUser | null> {
+      async authorize(credentials: Credentials | undefined) {
         if (!credentials?.email || !credentials.password) return null;
 
         const user = await prisma.user.findUnique({
@@ -53,7 +52,11 @@ export const authOptions: AuthOptions = {
         );
         if (!isValid) return null;
 
-        return user;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        };
       },
     }),
   ],
