@@ -115,72 +115,72 @@ export default function ProjectsManager({
           {selectedTeam && (
             <>
               {/* Crear proyecto */}
-              <form onSubmit={createProject} className="bg-green-50 p-4 rounded-lg border border-green-200">
-            <h4 className="font-semibold text-slate-900 mb-3">📁 Crear Nuevo Proyecto</h4>
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Nombre del proyecto"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                disabled={loading}
-              />
+              <form onSubmit={createProject} className="bg-green-50 p-4 sm:p-6 rounded-lg border border-green-200">
+                <h4 className="font-semibold text-slate-900 mb-3">📁 Crear Nuevo Proyecto</h4>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="Nombre del proyecto"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    disabled={loading}
+                  />
 
-              <textarea
-                placeholder="Descripción (opcional)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={2}
-                className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                disabled={loading}
-              />
+                  <textarea
+                    placeholder="Descripción (opcional)"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={2}
+                    className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    disabled={loading}
+                  />
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400"
-              >
-                {loading ? "Creando..." : "Crear Proyecto"}
-              </button>
-            </div>
-          </form>
-
-          {/* Lista de proyectos */}
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-3">
-              📂 Proyectos ({projects.length})
-            </h4>
-            {projects.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
-                No hay proyectos en este equipo
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {projects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="flex items-start justify-between bg-white p-3 rounded-lg border border-slate-200 hover:shadow-md transition"
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400"
                   >
-                    <div>
-                      <p className="font-medium text-slate-900">{project.name}</p>
-                      {project.description && (
-                        <p className="text-sm text-slate-600 mt-1">
-                          {project.description}
-                        </p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => deleteProject(project.id, project.name)}
-                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition whitespace-nowrap ml-2"
-                    >
-                      🗑️ Eliminar
-                    </button>
+                    {loading ? "Creando..." : "Crear Proyecto"}
+                  </button>
+                </div>
+              </form>
+
+              {/* Lista de proyectos */}
+              <div>
+                <h4 className="font-semibold text-slate-900 mb-3">
+                  📂 Proyectos ({projects.length})
+                </h4>
+                {projects.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    No hay proyectos en este equipo
                   </div>
-                ))}
+                ) : (
+                  <div className="space-y-2">
+                    {projects.map((project) => (
+                      <div
+                        key={project.id}
+                        className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 hover:shadow-md transition"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-slate-900 break-words">{project.name}</p>
+                          {project.description && (
+                            <p className="text-sm text-slate-600 mt-1 break-words">
+                              {project.description}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => deleteProject(project.id, project.name)}
+                          className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition whitespace-nowrap self-start sm:self-auto"
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
             </>
           )}
         </>

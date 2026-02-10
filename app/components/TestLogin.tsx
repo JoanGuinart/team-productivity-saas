@@ -28,27 +28,33 @@ export default function TestLogin() {
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-2">
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2"
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2"
-        required
-      />
-      <button type="submit" className="bg-blue-500 text-white p-2">
-        Login
-      </button>
-      {message && <p>{message}</p>}
-    </form>
+    <div className="p-4 sm:p-6 border rounded-lg w-full shadow-md bg-white">
+      <h3 className="font-bold text-lg sm:text-xl mb-4">Iniciar sesión</h3>
+      <form onSubmit={handleLogin} className="space-y-3">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+          required
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-2 sm:p-3 rounded w-full font-medium transition text-sm sm:text-base"
+        >
+          Login
+        </button>
+        {message && <p className="text-sm sm:text-base">{message}</p>}
+      </form>
+    </div>
   );
 }

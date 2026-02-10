@@ -35,43 +35,45 @@ export default function TestRegister() {
   };
 
   return (
-    <div className="p-4 border rounded-md w-full max-w-md mt-4">
-      <h3 className="font-bold mb-2">Registrar usuario de prueba</h3>
-      <input
-        type="text"
-        placeholder="Nombre"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="border p-2 w-full mb-2 rounded"
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 w-full mb-2 rounded"
-      />
-      <input
-        type="password"
-        placeholder="Contraseña del usuario"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 w-full mb-2 rounded"
-      />
-      <input
-        type="password"
-        placeholder="Contraseña de administrador"
-        value={adminPassword}
-        onChange={(e) => setAdminPassword(e.target.value)}
-        className="border p-2 w-full mb-2 rounded"
-      />
-      <button
-        onClick={handleRegister}
-        className="bg-blue-500 text-white p-2 rounded w-full"
-      >
-        Registrar
-      </button>
-      {result && <p className="mt-2">{result}</p>}
+    <div className="p-4 sm:p-6 border rounded-lg w-full shadow-md bg-white">
+      <h3 className="font-bold text-lg sm:text-xl mb-4">Registrar usuario</h3>
+      <div className="space-y-3">
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+        />
+        <input
+          type="password"
+          placeholder="Contraseña del usuario"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+        />
+        <input
+          type="password"
+          placeholder="Contraseña de administrador"
+          value={adminPassword}
+          onChange={(e) => setAdminPassword(e.target.value)}
+          className="border p-2 sm:p-3 w-full rounded text-sm sm:text-base"
+        />
+        <button
+          onClick={handleRegister}
+          className="bg-blue-500 hover:bg-blue-600 text-white p-2 sm:p-3 rounded w-full font-medium transition text-sm sm:text-base"
+        >
+          Registrar
+        </button>
+      </div>
+      {result && <p className="mt-3 text-sm sm:text-base">{result}</p>}
     </div>
   );
 }

@@ -93,7 +93,7 @@ function OverviewTab({ teams }: { teams: Team[] }) {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <StatCard
           label="Equipos"
           value={teams.length}
@@ -116,19 +116,19 @@ function OverviewTab({ teams }: { teams: Team[] }) {
 
       {/* Equipos detallados */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-slate-900">Tus Equipos</h3>
+        <h3 className="text-lg sm:text-xl font-bold text-slate-900">Tus Equipos</h3>
         {teams.length === 0 ? (
-          <div className="bg-white p-8 rounded-lg text-center text-slate-500 border border-slate-200">
+          <div className="bg-white p-6 sm:p-8 rounded-lg text-center text-slate-500 border border-slate-200">
             No tienes equipos todavía
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             {teams.map((team) => (
               <div
                 key={team.id}
-                className="bg-white p-6 rounded-lg border border-slate-200 hover:shadow-lg transition"
+                className="bg-white p-4 sm:p-6 rounded-lg border border-slate-200 hover:shadow-lg transition"
               >
-                <h4 className="text-lg font-semibold text-slate-900 mb-3">
+                <h4 className="text-base sm:text-lg font-semibold text-slate-900 mb-3">
                   {team.name}
                 </h4>
                 <div className="space-y-2 text-sm text-slate-600">
@@ -142,7 +142,7 @@ function OverviewTab({ teams }: { teams: Team[] }) {
                     <p className="text-xs font-medium text-slate-700 mb-2">Miembros:</p>
                     <div className="flex flex-wrap gap-1">
                       {team.members.slice(0, 3).map((m) => (
-                        <span key={m.id} className="text-xs bg-slate-100 px-2 py-1 rounded">
+                        <span key={m.id} className="text-xs bg-slate-100 px-2 py-1 rounded truncate max-w-[120px]">
                           {m.name || m.email}
                         </span>
                       ))}
@@ -183,14 +183,14 @@ function StatCard({
 
   return (
     <div
-      className={`p-6 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]}`}
+      className={`p-4 sm:p-6 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]}`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-slate-600 text-sm">{label}</p>
-          <p className="text-3xl font-bold text-slate-900">{value}</p>
+          <p className="text-slate-600 text-xs sm:text-sm">{label}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{value}</p>
         </div>
-        <span className="text-4xl">{icon}</span>
+        <span className="text-3xl sm:text-4xl">{icon}</span>
       </div>
     </div>
   );

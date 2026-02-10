@@ -219,11 +219,11 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
       ) : loading ? (
         <div className="text-center py-8">Cargando tareas...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {statusColumns.map((col) => (
             <div
               key={col.id}
-              className="bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[400px]"
+              className="bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[300px]"
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => {
                 if (draggingTaskId) {
@@ -248,34 +248,54 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
                       key={task.id}
                       draggable
                       onDragStart={() => setDraggingTaskId(task.id)}
-                      className="bg-white border border-slate-200 rounded-lg p-3 cursor-grab hover:shadow-md transition"
+                      className="bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md transition touch-pan-y"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <h5 className="font-medium text-slate-900 text-sm">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h5 className="font-medium text-slate-900 text-sm flex-1">
                           {task.title}
                         </h5>
                         <button
                           onClick={() => deleteTask(task.id)}
-                          className="text-xs text-red-500 hover:text-red-700"
+                          className="text-xs text-red-500 hover:text-red-700 px-1"
+                          aria-label="Eliminar tarea"
                         >
                           🗑️
                         </button>
                       </div>
 
                       {task.description && (
-                        <p className="text-xs text-slate-600 mt-1">
+                        <p className="text-xs text-slate-600 mb-2 line-clamp-2">
                           {task.description}
                         </p>
                       )}
 
-                      <div className="mt-2 flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-slate-500">👤 {task.assignee?.name || task.assignee?.email || "Sin asignar"}</span>
-                        <span className={`text-xs px-2 py-1 rounded ${priorityStyles[task.priority || "medium"]}`}>
+                      <div className="mt-2 flex items-center gap-2 flex-wrap text-xs">
+                        <span className="text-slate-500 truncate max-w-[120px]">
+                          👤 {task.assignee?.name || task.assignee?.email || "Sin asignar"}
+                        </span>
+                        <span className={`px-2 py-1 rounded ${priorityStyles[task.priority || "medium"]}`}>
                           {task.priority || "medium"}
                         </span>
                         {task.dueDate && (
-                          <span className="text-xs text-slate-500">⏰ {new Date(task.dueDate).toLocaleDateString()}</span>
+                          <span className="text-slate-500">
+                            ⏰ {new Date(task.dueDate).toLocaleDateString()}
+                          </span>
                         )}
+                      </div>
+
+                      {/* Mobile status change buttons */}
+                      <div className="mt-2 flex gap-1 lg:hidden">
+                        {statusColumns
+                          .filter((s) => s.id !== col.id)
+                          .map((s) => (
+                            <button
+                              key={s.id}
+                              onClick={() => updateTaskStatus(task.id, s.id)}
+                              className="flex-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded transition"
+                            >
+                              → {s.label}
+                            </button>
+                          ))}
                       </div>
                     </div>
                   ))}

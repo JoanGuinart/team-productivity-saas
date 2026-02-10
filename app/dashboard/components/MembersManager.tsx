@@ -142,21 +142,21 @@ export default function MembersManager({
   return (
     <div className="space-y-6">
       {/* Crear equipo nuevo */}
-      <form onSubmit={createTeam} className="bg-green-50 p-4 rounded-lg border border-green-200">
-        <h4 className="font-semibold text-slate-900 mb-3">➕ Crear Nuevo Equipo</h4>
-        <div className="flex gap-2">
+      <form onSubmit={createTeam} className="bg-green-50 p-4 sm:p-6 rounded-lg border border-green-200">
+        <h4 className="font-semibold text-slate-900 mb-3 text-base sm:text-lg">➕ Crear Nuevo Equipo</h4>
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="Nombre del equipo"
             value={newTeamName}
             onChange={(e) => setNewTeamName(e.target.value)}
-            className="flex-1 border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
             disabled={creatingTeam}
           />
           <button
             type="submit"
             disabled={creatingTeam || !newTeamName.trim()}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
           >
             {creatingTeam ? "Creando..." : "Crear"}
           </button>
@@ -175,7 +175,7 @@ export default function MembersManager({
             setSearchQuery("");
             setSelectedUserId("");
           }}
-          className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         >
           <option value="">-- Selecciona equipo --</option>
           {teams.map((team) => (
@@ -189,8 +189,8 @@ export default function MembersManager({
       {selectedTeam && (
         <>
           {/* Agregar miembro */}
-          <form onSubmit={addMember} className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-slate-900 mb-3">➕ Agregar Miembro</h4>
+          <form onSubmit={addMember} className="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-200">
+            <h4 className="font-semibold text-slate-900 mb-3 text-base sm:text-lg">➕ Agregar Miembro</h4>
             <div className="space-y-3">
               {/* Búsqueda de usuarios */}
               <div>
@@ -202,7 +202,7 @@ export default function MembersManager({
                   placeholder="Busca por email o nombre..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   disabled={loading}
                 />
               </div>
@@ -216,7 +216,7 @@ export default function MembersManager({
                   <select
                     value={selectedUserId}
                     onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   >
                     <option value="">-- Elige un usuario --</option>
                     {availableUsers.map((user) => (
@@ -229,7 +229,7 @@ export default function MembersManager({
               )}
 
               {searchQuery && availableUsers.length === 0 && (
-                <p className="text-sm text-slate-600 italic">
+                <p className="text-xs sm:text-sm text-slate-600 italic">
                   No se encontraron usuarios. Verifica el nombre o email.
                 </p>
               )}
@@ -238,7 +238,7 @@ export default function MembersManager({
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               >
                 <option value="member">Miembro</option>
                 <option value="admin">Admin</option>
@@ -256,11 +256,11 @@ export default function MembersManager({
 
           {/* Lista de miembros */}
           <div>
-            <h4 className="font-semibold text-slate-900 mb-3">
+            <h4 className="font-semibold text-slate-900 mb-3 text-base sm:text-lg">
               👥 Miembros ({members.length})
             </h4>
             {members.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-slate-500 text-sm sm:text-base">
                 No hay miembros en este equipo
               </div>
             ) : (
@@ -268,19 +268,19 @@ export default function MembersManager({
                 {members.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 hover:shadow-md transition"
                   >
-                    <div>
-                      <p className="font-medium text-slate-900">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-slate-900 truncate">
                         {member.name || member.email}
                       </p>
-                      <p className="text-xs text-slate-600 capitalize">
+                      <p className="text-xs text-slate-600 capitalize mt-1">
                         {member.role}
                       </p>
                     </div>
                     <button
                       onClick={() => deleteMember(member.id, member.email || "")}
-                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition"
+                      className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition self-start sm:self-auto whitespace-nowrap"
                     >
                       🗑️ Eliminar
                     </button>

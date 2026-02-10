@@ -59,13 +59,13 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-      <h3 className="font-semibold mb-3 text-slate-900 flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 sm:p-4 rounded-lg border border-blue-200">
+      <h3 className="font-semibold mb-3 text-slate-900 flex items-center gap-2 text-base sm:text-lg">
         <span className="text-lg">✅</span> Nueva Tarea
       </h3>
 
       {projects.length === 0 && (
-        <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-3 py-2 rounded-lg mb-3 text-sm">
+        <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-3 py-2 rounded-lg mb-3 text-xs sm:text-sm">
           ⚠️ No hay proyectos en este equipo. Crea un proyecto primero.
         </div>
       )}
@@ -75,7 +75,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
         placeholder="Título"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         disabled={projects.length === 0}
       />
 
@@ -83,16 +83,16 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
         placeholder="Descripción"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         rows={2}
         disabled={projects.length === 0}
       />
 
-      <div className="grid grid-cols-2 gap-2 mb-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           disabled={projects.length === 0}
         >
           <option value="low">Prioridad: baja</option>
@@ -105,7 +105,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-slate-300 p-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           disabled={projects.length === 0}
         />
       </div>
@@ -113,7 +113,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
       <select
         value={projectId}
         onChange={(e) => setProjectId(e.target.value)}
-        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-slate-300 p-2 mb-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         disabled={projects.length === 0}
       >
         <option value="">Selecciona proyecto</option>
@@ -127,7 +127,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
       <select
         value={assigneeId}
         onChange={(e) => setAssigneeId(e.target.value)}
-        className="border border-slate-300 p-2 mb-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-slate-300 p-2 mb-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
       >
         <option value="">Asignar a...</option>
         {members.map((m) => (
@@ -140,7 +140,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
       <button
         type="submit"
         disabled={projects.length === 0}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed w-full"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed w-full text-sm sm:text-base"
       >
         Crear Tarea
       </button>
