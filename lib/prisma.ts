@@ -8,31 +8,39 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const databaseUrl = process.env.DATABASE_URL;
+const directUrl = process.env.DIRECT_URL;
+
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not set. Check .env.local / .env");
+  throw new Error("DATABASE_URL is not set");
+}
+
+if (!directUrl) {
+  throw new Error("DIRECT_URL is not set");
 }
 
 const createClient = () => {
-  // Prisma Postgres / Accelerate style URLs
+  // Prisma Accelerate / Data Proxy
   if (
-    databaseUrl.startsWith("prisma://") ||
-    databaseUrl.startsWith("prisma+postgres://")
+    directUrl.startsWith("prisma://") ||
+    directUrl.startsWith("prisma+postgres://")
   ) {
     return new PrismaClient({
-      datasourceUrl: databaseUrl,
+      datasourceUrl: directUrl,
     });
   }
 
-  // Direct Postgres connection strings (e.g. Supabase)
-  if (databaseUrl.startsWith("postgresql://") || databaseUrl.startsWith("postgres://")) {
+  // Supabase / Postgres (NO pooler)
+  if (
+    directUrl.startsWith("postgresql://") ||
+    directUrl.startsWith("postgres://")
+  ) {
     const shouldUseSsl =
-      !databaseUrl.includes("localhost") &&
-      !databaseUrl.includes("127.0.0.1");
+      !directUrl.includes("localhost") && !directUrl.includes("127.0.0.1");
 
     const pool =
       globalForPrisma.pgPool ??
       new Pool({
-        connectionString: databaseUrl,
+        connectionString: directUrl,
         ssl: shouldUseSsl ? { rejectUnauthorized: false } : undefined,
       });
 
@@ -44,9 +52,7 @@ const createClient = () => {
     return new PrismaClient({ adapter });
   }
 
-  throw new Error(
-    "Unsupported DATABASE_URL protocol. Expected prisma://, prisma+postgres://, postgresql:// or postgres://",
-  );
+  throw new Error("Unsupported DIRECT_URL protocol");
 };
 
 export const prisma = globalForPrisma.prisma ?? createClient();
