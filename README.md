@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment (Vercel)
+
+Set these variables in Vercel (Production + Preview):
+
+```
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?pgbouncer=true&sslmode=require
+DIRECT_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require
+NEXTAUTH_URL=https://your-domain.vercel.app
+NEXTAUTH_SECRET=your-secret
+```
+
+Notes:
+- Use the Supabase Connection Pooling string for `DATABASE_URL`.
+- Use the Supabase Direct Connection string for `DIRECT_URL` (migrations only).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
