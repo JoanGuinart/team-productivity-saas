@@ -22,18 +22,20 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Environment (Vercel)
 
-Set these variables in Vercel (Production + Preview):
+Set these variables in Vercel (Settings > Environment Variables). Add them to **PRODUCTION** and **PREVIEW** scopes:
 
 ```
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?pgbouncer=true&sslmode=require
-DIRECT_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require
-NEXTAUTH_URL=https://your-domain.vercel.app
-NEXTAUTH_SECRET=your-secret
+DATABASE_URL=postgresql://postgres:PASSWORD@db.nqgdzacfobaboiayugmv.supabase.co:6543/postgres?sslmode=require
+DIRECT_URL=postgresql://postgres:PASSWORD@db.nqgdzacfobaboiayugmv.supabase.co:5432/postgres?sslmode=require
+NEXTAUTH_URL=https://team-productivity-saas.vercel.app
+NEXTAUTH_SECRET=your-secret-here
 ```
 
-Notes:
-- Use the Supabase Connection Pooling string for `DATABASE_URL`.
-- Use the Supabase Direct Connection string for `DIRECT_URL` (migrations only).
+**Important notes:**
+- Use `DATABASE_URL` with port **6543** (Supabase Transaction Pooler mode - supports IPv4, needed for Vercel)
+- Use `DIRECT_URL` with port **5432** (Direct connection, only for migrations/local)
+- Do NOT include `?pgbouncer=true` - use `?sslmode=require` instead
+- Supabase Transaction Pooler automatically handles connection pooling for serverless
 
 ## Learn More
 
