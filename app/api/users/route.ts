@@ -40,10 +40,12 @@ export async function GET(req: Request) {
         select: { userId: true },
       });
 
-      const existingUserIds = existingMembers.map((m) => m.userId);
+      const existingUserIds = existingMembers.map(
+        (m: typeof existingMembers[number]) => m.userId,
+      );
 
       const filteredUsers = users.filter(
-        (user) => !existingUserIds.includes(user.id)
+        (user) => !existingUserIds.includes(user.id),
       );
 
       return new Response(JSON.stringify(filteredUsers), { status: 200 });
