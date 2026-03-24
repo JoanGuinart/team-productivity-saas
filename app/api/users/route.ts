@@ -45,7 +45,7 @@ export async function GET(req: Request) {
       );
 
       const filteredUsers = users.filter(
-        (user) => !existingUserIds.includes(user.id),
+        (user: typeof users[number]) => !existingUserIds.includes(user.id),
       );
 
       return new Response(JSON.stringify(filteredUsers), { status: 200 });
