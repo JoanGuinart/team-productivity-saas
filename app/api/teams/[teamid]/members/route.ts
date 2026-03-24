@@ -39,7 +39,7 @@ export async function GET(
     }
 
     // Mapea los miembros a datos simples
-    const members = team.members.map((m) => ({
+    const members = team.members.map((m: typeof team.members[number]) => ({
       id: m.user.id,
       name: m.user.name,
       email: m.user.email,
