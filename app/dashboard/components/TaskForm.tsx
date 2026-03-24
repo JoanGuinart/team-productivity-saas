@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { showApiErrorAlert } from "@/lib/clientApi";
 
 interface Project {
   id: string;
@@ -53,8 +54,7 @@ export default function TaskForm({ teamId, projects, members }: TaskFormProps) {
       setPriority("medium");
       setDueDate("");
     } else {
-      const data = await res.json();
-      alert("Error: " + data.error);
+      await showApiErrorAlert(res, "No se pudo crear la tarea");
     }
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { showApiErrorAlert } from "@/lib/clientApi";
 
 interface Props {
   projects: { id: string; name: string }[];
@@ -29,8 +30,7 @@ export default function NewTaskForm({ projects }: Props) {
       setDescription("");
       alert("Tarea creada ✅");
     } else {
-      const data = await res.json();
-      alert("Error: " + data.error);
+      await showApiErrorAlert(res, "No se pudo crear la tarea");
     }
 
     setLoading(false);

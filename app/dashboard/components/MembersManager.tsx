@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { showApiErrorAlert } from "@/lib/clientApi";
 
 interface Member {
   id: string;
@@ -78,7 +79,11 @@ export default function MembersManager({
         body: JSON.stringify({ name: newTeamName }),
       });
 
-      if (!res.ok) throw new Error("Error creando equipo");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo crear el equipo");
+        return;
+      }
+
       alert("Equipo creado ✅");
       setNewTeamName("");
       onMemberDeleted(); // Recargar equipos
@@ -104,9 +109,10 @@ export default function MembersManager({
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Error agregando miembro");
+        await showApiErrorAlert(res, "No se pudo agregar el miembro");
+        return;
       }
+
       alert("Miembro agregado ✅");
       setSearchQuery("");
       setSelectedUserId("");
@@ -131,7 +137,11 @@ export default function MembersManager({
         },
       );
 
-      if (!res.ok) throw new Error("Error eliminando miembro");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo eliminar el miembro");
+        return;
+      }
+
       onMemberDeleted();
     } catch (error) {
       console.error(error);
@@ -156,7 +166,7 @@ export default function MembersManager({
           <button
             type="submit"
             disabled={creatingTeam || !newTeamName.trim()}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
+            className="whitespace-nowrap rounded-lg bg-green-600 px-6 py-2.5 font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
           >
             {creatingTeam ? "Creando..." : "Crear"}
           </button>
@@ -247,7 +257,7 @@ export default function MembersManager({
               <button
                 type="submit"
                 disabled={loading || !selectedUserId}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
               >
                 {loading ? "Agregando..." : "Agregar"}
               </button>
@@ -280,7 +290,7 @@ export default function MembersManager({
                     </div>
                     <button
                       onClick={() => deleteMember(member.id, member.email || "")}
-                      className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition self-start sm:self-auto whitespace-nowrap"
+                      className="self-start whitespace-nowrap rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 sm:w-auto sm:self-auto"
                     >
                       🗑️ Eliminar
                     </button>

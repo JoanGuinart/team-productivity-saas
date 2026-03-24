@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import TaskForm from "./TaskForm";
+import { showApiErrorAlert } from "@/lib/clientApi";
 
 type StatusType = "todo" | "in-progress" | "done";
 
@@ -127,7 +128,11 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
 
     try {
       const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Error borrando tarea");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo borrar la tarea");
+        return;
+      }
+
       setTasks(tasks.filter((t) => t.id !== taskId));
       onTaskDeleted();
     } catch (error) {
@@ -143,7 +148,11 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (!res.ok) throw new Error("Error actualizando tarea");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo actualizar la tarea");
+        return;
+      }
+
       const updated = await res.json();
       setTasks(tasks.map((t) => (t.id === taskId ? updated : t)));
     } catch (error) {
@@ -219,11 +228,15 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
       ) : loading ? (
         <div className="text-center py-8">Cargando tareas...</div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="space-y-3">
+          <p className="text-xs text-slate-500 lg:hidden">
+            Desliza horizontalmente para ver cada columna del tablero.
+          </p>
+          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
           {statusColumns.map((col) => (
             <div
               key={col.id}
-              className="bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[300px]"
+              className="min-h-[300px] min-w-[85vw] snap-start rounded-lg border border-slate-200 bg-slate-50 p-3 sm:min-w-[23rem] lg:min-w-0"
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => {
                 if (draggingTaskId) {
@@ -291,7 +304,7 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
                             <button
                               key={s.id}
                               onClick={() => updateTaskStatus(task.id, s.id)}
-                              className="flex-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded transition"
+                              className="flex-1 rounded bg-blue-100 px-2 py-1.5 text-xs text-blue-700 transition hover:bg-blue-200"
                             >
                               → {s.label}
                             </button>
@@ -303,6 +316,7 @@ export default function TasksManager({ teams, onTaskDeleted }: TasksManagerProps
               )}
             </div>
           ))}
+          </div>
         </div>
       )}
     </div>

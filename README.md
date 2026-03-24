@@ -29,6 +29,10 @@ DATABASE_URL=postgresql://postgres:PASSWORD@db.nqgdzacfobaboiayugmv.supabase.co:
 DIRECT_URL=postgresql://postgres:PASSWORD@db.nqgdzacfobaboiayugmv.supabase.co:5432/postgres?sslmode=require
 NEXTAUTH_URL=https://team-productivity-saas.vercel.app
 NEXTAUTH_SECRET=your-secret-here
+DEMO_READONLY=true
+NEXT_PUBLIC_DEMO_READONLY=true
+NEXT_PUBLIC_DEMO_LOGIN_EMAIL=demo.admin@taskflow.local
+NEXT_PUBLIC_DEMO_LOGIN_PASSWORD=demo1234
 ```
 
 **Important notes:**
@@ -36,6 +40,58 @@ NEXTAUTH_SECRET=your-secret-here
 - Use `DIRECT_URL` with port **5432** (Direct connection, only for migrations/local)
 - Do NOT include `?pgbouncer=true` - use `?sslmode=require` instead
 - Supabase Transaction Pooler automatically handles connection pooling for serverless
+- Set `DEMO_READONLY=true` for public portfolio deployments to block write endpoints (POST/PATCH/DELETE)
+
+## Portfolio Demo (Safe Mode)
+
+Objetivo: publicar una demo fullstack sin permitir que visitantes ensucien la base de datos.
+
+### 1) Base de datos demo separada
+
+- Crea un proyecto nuevo en Supabase solo para demo.
+- No uses nunca tu base de datos personal/real.
+
+### 2) Variables de entorno en Vercel
+
+Configura estas variables en Production:
+
+```
+DATABASE_URL=postgresql://...:6543/postgres?sslmode=require
+DIRECT_URL=postgresql://...:5432/postgres?sslmode=require
+NEXTAUTH_URL=https://tu-dominio-demo.vercel.app
+NEXTAUTH_SECRET=tu-secreto-seguro
+ADMIN_PASSWORD=deshabilitado-en-demo
+DEMO_READONLY=true
+DEMO_USER_PASSWORD=demo1234
+NEXT_PUBLIC_DEMO_READONLY=true
+NEXT_PUBLIC_DEMO_LOGIN_EMAIL=demo.admin@taskflow.local
+NEXT_PUBLIC_DEMO_LOGIN_PASSWORD=demo1234
+```
+
+### 3) Seed de datos de demostracion
+
+El script crea/actualiza usuarios demo, equipo, proyectos y tareas sin borrar datos existentes.
+
+Comando local:
+
+```bash
+npm run seed:demo -- --confirm=yes
+```
+
+Usuarios demo creados:
+
+- demo.admin@taskflow.local
+- demo.member@taskflow.local
+
+Password por defecto:
+
+- demo1234 (o el valor de `DEMO_USER_PASSWORD`)
+
+### 4) Resultado esperado
+
+- La app funciona y muestra datos reales de ejemplo.
+- Las operaciones de escritura (POST/PATCH/DELETE) responden 403 en demo publica.
+- El banner superior indica que la demo es de solo lectura.
 
 ## Learn More
 

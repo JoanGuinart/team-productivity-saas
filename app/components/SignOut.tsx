@@ -12,7 +12,7 @@ export default function LogoutButton() {
         signOut({ callbackUrl: "/" });
         router.refresh(); // fuerza que la página y fetch se actualicen
       }}
-      className="bg-red-500 text-white p-2 rounded"
+      className="w-full rounded-lg bg-red-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-600"
     >
       Cerrar sesión
     </button>

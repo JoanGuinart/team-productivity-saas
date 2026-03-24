@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { guardDemoReadonly } from "@/lib/demoMode";
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +10,11 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: "No autorizado" }), {
         status: 401,
       });
+    }
+
+    const demoGuard = guardDemoReadonly();
+    if (demoGuard) {
+      return demoGuard;
     }
 
     const { teamId, userId, role } = await req.json();

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { guardDemoReadonly } from "@/lib/demoMode";
 
 interface CreateTaskBody {
   title: string;
@@ -18,6 +19,11 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "No autorizado" }), {
       status: 401,
     });
+  }
+
+  const demoGuard = guardDemoReadonly();
+  if (demoGuard) {
+    return demoGuard;
   }
 
   const body: CreateTaskBody = await req.json();

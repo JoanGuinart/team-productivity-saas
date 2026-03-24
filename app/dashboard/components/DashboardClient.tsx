@@ -125,12 +125,10 @@ function OverviewTab({ teams, pendingTasksCount }: { teams: Team[]; pendingTasks
   const totalProjects = teams.reduce((sum, t) => sum + (t.projects?.length || 0), 0);
   const totalMembers = teams.reduce((sum, t) => sum + (t.members?.length || 0), 0);
 
-  console.log(teams);
-
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         <StatCard
           label="Equipos"
           value={teams.length}
@@ -163,6 +161,27 @@ function OverviewTab({ teams, pendingTasksCount }: { teams: Team[]; pendingTasks
           onClick={() => setSelectedView("tasks")}
           selected={selectedView === "tasks"}
         />
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-1 sm:hidden">
+        {[
+          { id: "teams", label: "Equipos" },
+          { id: "projects", label: "Proyectos" },
+          { id: "members", label: "Miembros" },
+          { id: "tasks", label: "Pendientes" },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setSelectedView(item.id as "teams" | "projects" | "members" | "tasks")}
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
+              selectedView === item.id
+                ? "bg-slate-900 text-white"
+                : "bg-white text-slate-600 border border-slate-200"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       {/* Vista dinámica según selección */}
@@ -201,10 +220,10 @@ function StatCard({
   return (
     <button
       onClick={onClick}
-      className={`p-4 sm:p-6 rounded-lg border transition-all hover:shadow-md ${colorClasses[color as keyof typeof colorClasses]} ${selected ? "ring-2 ring-blue-500 shadow-lg" : ""}`}
+      className={`rounded-2xl border p-4 transition-all hover:shadow-md sm:p-6 ${colorClasses[color as keyof typeof colorClasses]} ${selected ? "ring-2 ring-blue-500 shadow-lg" : ""}`}
     >
-      <div className="flex items-center justify-between">
-        <div className="text-left">
+      <div className="flex items-start justify-between gap-3 sm:items-center">
+        <div className="text-left min-w-0">
           <p className="text-slate-600 text-xs sm:text-sm">{label}</p>
           <p className="text-2xl sm:text-3xl font-bold text-slate-900">{value}</p>
         </div>
@@ -243,7 +262,7 @@ function TeamsView({ teams }: { teams: Team[] }) {
                   <p className="text-xs font-medium text-slate-700 mb-2">Miembros:</p>
                   <div className="flex flex-wrap gap-1">
                     {team.members.slice(0, 3).map((m) => (
-                      <span key={m.id} className="text-xs bg-slate-100 px-2 py-1 rounded truncate max-w-30">
+                      <span key={m.id} className="max-w-[7.5rem] truncate rounded bg-slate-100 px-2 py-1 text-xs">
                         {m.name || m.email}
                       </span>
                     ))}

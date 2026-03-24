@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 button {
     cursor: pointer !important;
 }
-button:hover {
-    scale: 0.95 !important;
+
+@media (hover: hover) and (pointer: fine) {
+    button:hover {
+        transform: scale(0.98);
+    }
 }

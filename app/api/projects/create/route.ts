@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { guardDemoReadonly } from "@/lib/demoMode";
 
 interface CreateProjectBody {
   name: string;
@@ -14,6 +15,11 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "No autorizado" }), {
       status: 401,
     });
+  }
+
+  const demoGuard = guardDemoReadonly();
+  if (demoGuard) {
+    return demoGuard;
   }
 
   const body: CreateProjectBody = await req.json();

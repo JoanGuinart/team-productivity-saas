@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { showApiErrorAlert } from "@/lib/clientApi";
 
 interface Project {
   id: string;
@@ -46,7 +47,11 @@ export default function ProjectsManager({
         body: JSON.stringify({ name, description, teamId: selectedTeam }),
       });
 
-      if (!res.ok) throw new Error("Error creando proyecto");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo crear el proyecto");
+        return;
+      }
+
       alert("Proyecto creado ✅");
       setName("");
       setDescription("");
@@ -68,7 +73,11 @@ export default function ProjectsManager({
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Error eliminando proyecto");
+      if (!res.ok) {
+        await showApiErrorAlert(res, "No se pudo eliminar el proyecto");
+        return;
+      }
+
       onProjectDeleted();
     } catch (error) {
       console.error(error);
@@ -139,7 +148,7 @@ export default function ProjectsManager({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:bg-gray-400"
+                    className="w-full rounded-lg bg-green-600 px-4 py-2.5 font-medium text-white transition hover:bg-green-700 disabled:bg-gray-400"
                   >
                     {loading ? "Creando..." : "Crear Proyecto"}
                   </button>
@@ -172,7 +181,7 @@ export default function ProjectsManager({
                         </div>
                         <button
                           onClick={() => deleteProject(project.id, project.name)}
-                          className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition whitespace-nowrap self-start sm:self-auto"
+                          className="w-full rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 sm:w-auto sm:self-auto whitespace-nowrap self-start"
                         >
                           🗑️ Eliminar
                         </button>

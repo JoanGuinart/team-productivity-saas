@@ -1,8 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { guardDemoReadonly } from "@/lib/demoMode";
 
 export async function POST(req: Request) {
   try {
+    const demoGuard = guardDemoReadonly();
+    if (demoGuard) {
+      return demoGuard;
+    }
+
     const { email, name, password, adminPassword } = await req.json();
 
     // Validar contraseña de admin

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getApiErrorMessage, isDemoReadonlyMessage } from "@/lib/clientApi";
 
 export default function TestRegister() {
   const [email, setEmail] = useState("");
@@ -17,11 +18,15 @@ export default function TestRegister() {
         body: JSON.stringify({ email, name, password, adminPassword }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        setResult(`Error: ${data.error}`);
+        const message = await getApiErrorMessage(res, "No se pudo registrar el usuario");
+        setResult(
+          isDemoReadonlyMessage(message)
+            ? "Estas en la demo publica. El registro esta desactivado."
+            : `Error: ${message}`,
+        );
       } else {
+        const data = await res.json();
         setResult(`Usuario creado: ${data.email}`);
         setEmail("");
         setName("");
