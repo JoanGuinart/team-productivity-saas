@@ -28,7 +28,7 @@ export async function GET() {
       id: team.id,
       name: team.name,
       membersCount: team.members.length,
-      projects: team.projects.map(p => ({ id: p.id, name: p.name })),
+      projects: team.projects.map((p: typeof team.projects[number]) => ({ id: p.id, name: p.name })),
       members: team.members.map(m => ({ 
         id: m.user.id, 
         name: m.user.name, 
