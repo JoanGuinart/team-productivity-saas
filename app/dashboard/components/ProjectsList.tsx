@@ -1,7 +1,11 @@
-import { Project } from "@prisma/client";
+interface ProjectListItem {
+  id: string;
+  name: string;
+  tasks: { id: string }[];
+}
 
 interface Props {
-  projects: (Project & { tasks: { id: string }[] })[];
+  projects: ProjectListItem[];
 }
 
 export default function ProjectsList({ projects }: Props) {

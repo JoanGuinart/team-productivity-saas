@@ -1,7 +1,14 @@
-import { Task } from "@prisma/client";
+interface TaskListItem {
+  id: string;
+  title: string;
+  status: string;
+  project: {
+    name: string;
+  };
+}
 
 interface Props {
-  tasks: (Task & { project: { name: string } })[];
+  tasks: TaskListItem[];
 }
 
 export default function MyTasksList({ tasks }: Props) {
