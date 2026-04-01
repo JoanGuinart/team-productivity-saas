@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { isDemoReadonly } from "@/lib/demoMode";
+import { searchDemoUsers } from "@/lib/demoData";
 
 // GET - Listar usuarios (buscar por email o nombre)
 export async function GET(req: Request) {
@@ -15,6 +17,12 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || "";
   const teamId = searchParams.get("teamId");
+
+  if (isDemoReadonly()) {
+    return new Response(JSON.stringify(searchDemoUsers(search, teamId)), {
+      status: 200,
+    });
+  }
 
   try {
     // Buscar usuarios por email o nombre

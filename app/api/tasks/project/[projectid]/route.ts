@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { isDemoReadonly } from "@/lib/demoMode";
+import { getDemoProjectTasks } from "@/lib/demoData";
 
 interface Params {
   params: Promise<{
@@ -18,6 +20,18 @@ export async function GET(_req: Request, { params }: Params) {
   }
 
   const { projectid: projectId } = await params;
+
+  if (isDemoReadonly()) {
+    const tasks = getDemoProjectTasks(projectId);
+    if (!tasks) {
+      return new Response(
+        JSON.stringify({ error: "Proyecto no encontrado o sin acceso" }),
+        { status: 404 },
+      );
+    }
+
+    return new Response(JSON.stringify(tasks), { status: 200 });
+  }
 
   // Verificar acceso al proyecto
   const project = await prisma.project.findFirst({

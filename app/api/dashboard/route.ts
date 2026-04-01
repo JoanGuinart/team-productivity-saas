@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { isDemoReadonly } from "@/lib/demoMode";
+import { getDemoDashboardTeams } from "@/lib/demoData";
 
 export async function GET() {
   try {
@@ -8,6 +10,12 @@ export async function GET() {
 
     if (!session?.user?.id) {
       return new Response(JSON.stringify({ teams: [] }), { status: 200 });
+    }
+
+    if (isDemoReadonly()) {
+      return new Response(JSON.stringify({ teams: getDemoDashboardTeams() }), {
+        status: 200,
+      });
     }
 
     // Obtener los equipos donde el usuario es miembro

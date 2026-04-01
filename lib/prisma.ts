@@ -4,7 +4,10 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const databaseUrl = process.env.DATABASE_URL;
+const isDemoReadonly = process.env.DEMO_READONLY === "true";
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  (isDemoReadonly ? "postgresql://demo:demo@localhost:5432/demo" : undefined);
 
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set");

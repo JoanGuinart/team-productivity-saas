@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { isDemoReadonly } from "@/lib/demoMode";
+import { DEMO_USER } from "@/lib/demoData";
 
 // Extiende los tipos de Session para incluir user.id
 declare module "next-auth" {
@@ -29,7 +31,7 @@ interface Credentials {
 
 // Configuración de NextAuth
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  ...(isDemoReadonly() ? {} : { adapter: PrismaAdapter(prisma) }),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -39,6 +41,22 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials: Credentials | undefined) {
         if (!credentials?.email || !credentials.password) return null;
+
+        if (isDemoReadonly()) {
+          const emailMatches =
+            credentials.email.toLowerCase() === DEMO_USER.email.toLowerCase();
+          const passwordMatches = credentials.password === DEMO_USER.password;
+
+          if (!emailMatches || !passwordMatches) {
+            return null;
+          }
+
+          return {
+            id: DEMO_USER.id,
+            email: DEMO_USER.email,
+            name: DEMO_USER.name,
+          };
+        }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
@@ -64,7 +82,7 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account, profile, trigger, isNewUser, session }) {
+    async jwt({ token, user }) {
       if (user) token.id = user.id;
       return token;
     },
